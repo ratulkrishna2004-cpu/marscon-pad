@@ -1,0 +1,55 @@
+body {
+    background-color: #f0f0f0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-family: Arial, sans-serif;
+    padding: 20px;
+}
+
+.controls {
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+#download-btn {
+    padding: 10px 25px;
+    background-color: #004a99;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    border-radius: 5px;
+}
+
+/* A4 Page Setup */
+#pad-area {
+    width: 794px; /* A4 width in px */
+    height: 1123px; /* A4 height in px */
+    background-image: url('Pad.jpg');
+    background-size: 100% 100%;
+    position: relative;
+    box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    background-color: white;
+}
+
+/* Editor Position - White space e boshate hobe */
+#editor-container {
+    position: absolute;
+    top: 135px;    /* Image-er header height onujayi adjust koren */
+    left: 235px;   /* Sidebar-er width onujayi adjust koren */
+    right: 30px;   /* Side padding */
+    bottom: 50px;  /* Bottom padding */
+    border: none !important;
+    font-size: 16px;
+}
+
+/* Hide Quill toolbar during PDF generation */
+.ql-toolbar.ql-snow {
+    border: none !important;
+    background: #fff;
+    border-bottom: 1px solid #ddd !important;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
