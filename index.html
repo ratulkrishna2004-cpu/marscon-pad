@@ -3,19 +3,98 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MARSCON 2026 - Digital Pad Editor</title>
+    <title>MARSCON 2026 - Digital Pad</title>
+    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <link rel="stylesheet" href="style.css">
+
+    <style>
+        /* ================= INLINE CSS ================= */
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #f0f2f5;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .navbar {
+            width: 100%;
+            background-color: #003366; /* Deep Blue Theme */
+            color: white;
+            padding: 20px 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+
+        .navbar h2 { margin: 0 0 10px 0; font-size: 22px; letter-spacing: 1px; }
+
+        .toolbar {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 10px 22px;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+            font-size: 14px;
+            text-transform: uppercase;
+        }
+
+        .add-btn { background-color: #28a745; color: white; }
+        .delete-btn { background-color: #dc3545; color: white; }
+        .download-btn { background-color: #ffffff; color: #003366; }
+
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+
+        .font-settings {
+            background: rgba(255,255,255,0.15);
+            padding: 6px 15px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        input[type="number"] {
+            width: 60px;
+            padding: 6px;
+            border-radius: 4px;
+            border: none;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .canvas-container-wrapper {
+            margin: 40px 0;
+            background: white;
+            box-shadow: 0 0 50px rgba(0,0,0,0.4);
+            border: 1px solid #ccc;
+        }
+
+        .hint { font-size: 13px; color: #bbdefb; margin-top: 8px; }
+    </style>
 </head>
 <body>
 
-    <div class="toolbar">
-        <div class="header-title">MARSCON 2026 DIGITAL PAD</div>
-        <div class="button-group">
+    <div class="navbar">
+        <h2>MARSCON 2026 DIGITAL PAD EDITOR</h2>
+        <div class="toolbar">
             <button class="btn add-btn" onclick="addText()">+ Add Text Box</button>
             
-            <div class="input-group">
+            <div class="font-settings">
                 <label>Size:</label>
                 <input type="number" id="fontSize" value="22" min="10" max="100">
             </div>
@@ -23,13 +102,87 @@
             <button class="btn delete-btn" onclick="deleteSelected()">Delete Selected</button>
             <button class="btn download-btn" onclick="downloadPDF()">Download HD PDF</button>
         </div>
-        <div class="instruction">Double click on text to edit. Drag to move. Press 'Delete' key to remove.</div>
+        <div class="hint">Double click to edit • Drag to move • 'Delete' key to remove</div>
     </div>
 
     <div class="canvas-container-wrapper">
         <canvas id="padCanvas"></canvas>
     </div>
 
-    <script src="script.js"></script>
+    <script>
+        /* ================= INLINE JAVASCRIPT ================= */
+        const canvas = new fabric.Canvas('padCanvas');
+        const A4_WIDTH = 794;
+        const A4_HEIGHT = 1123;
+
+        // Load Template Image
+        fabric.Image.fromURL('Pad.jpg', function(img) {
+            if (!img) {
+                alert("Error: 'Pad.jpg' file-ti folder-e paoa jachche na!");
+                return;
+            }
+            
+            canvas.setDimensions({ width: A4_WIDTH, height: A4_HEIGHT });
+
+            img.set({
+                scaleX: A4_WIDTH / img.width,
+                scaleY: A4_HEIGHT / img.height,
+                selectable: false,
+                evented: false
+            });
+
+            canvas.setBackgroundImage(img, canvas.renderAll.bind(canvas));
+        }, { crossOrigin: 'anonymous' });
+
+        // Add Text Box Function
+        function addText() {
+            const size = document.getElementById('fontSize').value;
+            const text = new fabric.IText('Double click to type...', {
+                left: 300, 
+                top: 300,
+                fontFamily: 'Arial',
+                fontSize: parseInt(size),
+                fill: '#000',
+                padding: 10,
+                cornerSize: 10,
+                transparentCorners: false,
+                cornerColor: '#003366'
+            });
+            canvas.add(text);
+            canvas.setActiveObject(text);
+        }
+
+        // Delete Function
+        function deleteSelected() {
+            const activeObject = canvas.getActiveObject();
+            if (activeObject && !activeObject.isEditing) {
+                canvas.remove(activeObject);
+            }
+        }
+
+        // Download HD PDF Function
+        function downloadPDF() {
+            const { jsPDF } = window.jspdf;
+            const dataURL = canvas.toDataURL({
+                format: 'jpeg',
+                quality: 1.0,
+                multiplier: 2 // High Resolution Download
+            });
+
+            const pdf = new jsPDF('p', 'px', [A4_WIDTH, A4_HEIGHT]);
+            pdf.addImage(dataURL, 'JPEG', 0, 0, A4_WIDTH, A4_HEIGHT);
+            pdf.save("MARSCON_Digital_Pad.pdf");
+        }
+
+        // Keyboard Shortcut
+        window.addEventListener('keydown', (e) => {
+            if (e.key === "Delete" || e.key === "Backspace") {
+                const activeObject = canvas.getActiveObject();
+                if (activeObject && !activeObject.isEditing) {
+                    canvas.remove(activeObject);
+                }
+            }
+        });
+    </script>
 </body>
 </html>
