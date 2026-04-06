@@ -1,0 +1,84 @@
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #cfd8dc;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Professional Toolbar */
+.toolbar {
+    width: 100%;
+    background-color: #0d47a1; /* Deep Blue */
+    color: white;
+    padding: 15px 0;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.header-title {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    letter-spacing: 1.5px;
+}
+
+.button-group {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.input-group {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.instruction {
+    font-size: 12px;
+    margin-top: 8px;
+    color: #bbdefb;
+}
+
+/* Buttons */
+.btn {
+    padding: 8px 18px;
+    border: none;
+    border-radius: 4px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.add-btn { background-color: #43a047; color: white; }
+.delete-btn { background-color: #e53935; color: white; }
+.download-btn { background-color: #ffffff; color: #0d47a1; }
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
+
+input[type="number"] {
+    width: 55px;
+    padding: 5px;
+    border-radius: 4px;
+    border: none;
+    text-align: center;
+}
+
+/* Canvas Area */
+.canvas-container-wrapper {
+    margin: 40px 0;
+    background: white;
+    box-shadow: 0 0 30px rgba(0,0,0,0.5);
+    border: 1px solid #999;
+}
